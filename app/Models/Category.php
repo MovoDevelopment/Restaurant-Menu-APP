@@ -20,4 +20,11 @@ class Category extends Model
     {
         return $this->children()->with('getAllChildren');
     }
+
+    public function getChildCountAttribute()
+    {
+        if ($this->attributes['path'])
+            return count(explode(',', $this->attributes['path']));
+        return 0;
+    }
 }

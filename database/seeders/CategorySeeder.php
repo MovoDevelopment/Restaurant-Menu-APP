@@ -28,7 +28,7 @@ class CategorySeeder extends Seeder
             // Create the last subcategory and mark it as last_child
             $lastChild = Category::factory()->create([
                 'parent_id' => $parent->id,
-                'path' => $parent->path . $parent->id . '/',
+                'path' => $parent->path . $parent->id,
                 'last_child' => true,
             ]);
 
@@ -37,7 +37,7 @@ class CategorySeeder extends Seeder
 
         $children = Category::factory()->count(3)->create([
             'parent_id' => $parent->id,
-            'path' => $parent->path . $parent->id . '/',
+            'path' => $parent->path . $parent->id . ',',
         ]);
 
         foreach ($children as $child) {
