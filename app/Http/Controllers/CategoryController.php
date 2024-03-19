@@ -9,6 +9,7 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -60,5 +61,16 @@ class CategoryController extends Controller
     public function destroy(DeleteCategoryRequest $deleteCategoryRequest)
     {
         $category = Category::find($deleteCategoryRequest->id);
+    }
+
+    public function leafNodes()
+    {
+        $nodes = DB::table('categories as t1')
+            ->select('t1.id', 't1.name')
+            ->leftJoin('categories as t2', 't1.id', '=', 't2.parent_id')
+            ->whereNull('t2.parent_id')
+            ->get();
+        return $this->sendResponse($nodes, "Category updated");
+
     }
 }
