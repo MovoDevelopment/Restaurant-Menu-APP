@@ -53,9 +53,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Item::class, 'user_id');
     }
-
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
 }

@@ -23,7 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('user/store', [UserController::class, 'store']);
 Route::post('user/login', [UserController::class, 'login']);
 
-Route::get('categories', [CategoryController::class, 'index']);
-Route::post('category/store', [CategoryController::class, 'store']);
-Route::post('category/update', [CategoryController::class, 'update']);
-Route::get('leaf-categories', [CategoryController::class, 'leafNodes']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('categories', [CategoryController::class, 'index']);
+    Route::post('category/store', [CategoryController::class, 'store']);
+    Route::post('category/update', [CategoryController::class, 'update']);
+    Route::get('leaf-categories', [CategoryController::class, 'leafNodes']);
+});
+

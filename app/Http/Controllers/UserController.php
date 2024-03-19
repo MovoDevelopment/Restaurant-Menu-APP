@@ -15,7 +15,7 @@ class UserController extends Controller
         $user = new User();
         $user->name = $storeUserRequest->name;
         $user->email = $storeUserRequest->email;
-        $user->password = $storeUserRequest->password;
+        $user->password = Hash::make($storeUserRequest->password);
         $user->role = $storeUserRequest->role;
         $user->save();
         return $this->sendResponse($user, 'User created');
