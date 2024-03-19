@@ -10,13 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')->constrained();
             $table->string('name', 255);
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->on('categories')->references('id')->onDelete('set null');
-            $table->string('path', 255)->nullable();
-            $table->boolean('last_child')->default(false);
+            $table->string('description', 1024)->nullable();
+            $table->double('price');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('items');
     }
 };
