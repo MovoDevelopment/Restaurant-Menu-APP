@@ -29,6 +29,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('categories', 'index');
         Route::post('category/store', 'store');
         Route::post('category/update', 'update');
+        Route::post('category/delete', 'destroy');
         Route::get('leaf-categories', 'leafNodes');
     });
     Route::controller(ItemController::class)->group(function () {

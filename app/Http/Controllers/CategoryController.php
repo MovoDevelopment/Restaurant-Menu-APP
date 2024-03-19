@@ -26,6 +26,7 @@ class CategoryController extends Controller
         $categories = Category::query()->whereNull('parent_id')->get();
         return $this->sendResponse(CategoryResource::collection($categories), "Categories");
     }
+
     public function store(StoreCategoryRequest $storeCategoryRequest)
     {
         if (!$storeCategoryRequest->category_id) {
@@ -77,7 +78,14 @@ class CategoryController extends Controller
 
     public function destroy(DeleteCategoryRequest $deleteCategoryRequest)
     {
-        $category = Category::find($deleteCategoryRequest->id);
+        $category = Category::query()->where('id', $deleteCategoryRequest->id)->with('items')->first();
+        if ($category->parent_id == null) {
+            $category->items()->delete();
+        } else {
+            $parentId = $category->parent_id;
+            $category->items()->update(['category_id' => $parentId]);
+        }
+        return $this->sendResponse(new CategoryResource($category), "Category updated");
     }
 
     public function leafNodes()
