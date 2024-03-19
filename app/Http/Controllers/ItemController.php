@@ -8,6 +8,7 @@ use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use App\Repositories\ItemRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ItemController extends Controller
 {
@@ -20,7 +21,10 @@ class ItemController extends Controller
 
     public function index()
     {
-        $items = Item::query()->with('category')->get();
+        $query = Item::query();
+        if (Auth::user()->role != "admin")
+            $query->where('user_id', Auth::user()->id);
+        $items = $query->with('category')->get();
         return $this->sendResponse(ItemResource::collection($items), "Items List");
     }
 

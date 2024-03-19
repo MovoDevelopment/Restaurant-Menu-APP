@@ -23,7 +23,10 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::query()->whereNull('parent_id')->get();
+        $query = Category::query();
+        if (Auth::user()->role != "admin")
+            $query->where('user_id', Auth::user()->id);
+        $categories = $query->whereNull('parent_id')->get();
         return $this->sendResponse(CategoryResource::collection($categories), "Categories");
     }
 
