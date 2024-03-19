@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,16 @@ Route::post('user/store', [UserController::class, 'store']);
 Route::post('user/login', [UserController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::post('category/store', [CategoryController::class, 'store']);
-    Route::post('category/update', [CategoryController::class, 'update']);
-    Route::get('leaf-categories', [CategoryController::class, 'leafNodes']);
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('categories', 'index');
+        Route::post('category/store', 'store');
+        Route::post('category/update', 'update');
+        Route::get('leaf-categories', 'leafNodes');
+    });
+    Route::controller(ItemController::class)->group(function () {
+        Route::get('items', 'index');
+        Route::post('item/store', 'store');
+        Route::post('item/delete', 'destroy');
+    });
 });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreItemRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,18 @@ class StoreItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = auth()->user();
         return [
-            //
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'user_id' => [
+                'required_if:user_type,admin',
+                Rule::exists('users', 'id')->where(function ($query) use ($user) {
+                    return $user->user_type === 'admin';
+                }),
+            ],
         ];
     }
 }
