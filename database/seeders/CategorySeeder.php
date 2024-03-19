@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +16,6 @@ class CategorySeeder extends Seeder
     {
         // Create root categories
         $rootCategories = Category::factory()->count(5)->create();
-
         // Create children for each root category
         foreach ($rootCategories as $rootCategory) {
             $this->createChildren($rootCategory, 1);
@@ -24,9 +24,11 @@ class CategorySeeder extends Seeder
 
     private function createChildren(Category $parent, $depth)
     {
+
         if ($depth >= 4) {
             // Create the last subcategory and mark it as last_child
-            $lastChild = Category::factory()->create([
+            Category::factory()->create([
+                'user_id' => $parent->user_id,
                 'parent_id' => $parent->id,
                 'path' => $parent->path . $parent->id,
                 'last_child' => true,
@@ -36,6 +38,7 @@ class CategorySeeder extends Seeder
         }
 
         $children = Category::factory()->count(3)->create([
+            'user_id' => $parent->user_id,
             'parent_id' => $parent->id,
             'path' => $parent->path . $parent->id . ',',
         ]);
