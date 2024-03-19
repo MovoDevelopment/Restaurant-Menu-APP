@@ -15,7 +15,12 @@ class Item extends Model
         'category_id', 'name', 'description', 'price'
     ];
 
-    public function category():BelongsTo
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
