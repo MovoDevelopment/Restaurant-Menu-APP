@@ -16,6 +16,11 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
     public function getAllChildren()
     {
         return $this->children()->with('getAllChildren');
@@ -26,5 +31,11 @@ class Category extends Model
         if ($this->attributes['path'])
             return count(explode(',', $this->attributes['path']));
         return 0;
+    }
+
+    public function getChildAttribute()
+    {
+        if ($this->attributes['path'])
+            return explode(',', $this->attributes['path']);
     }
 }

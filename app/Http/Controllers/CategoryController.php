@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
@@ -36,9 +38,27 @@ class CategoryController extends Controller
             } elseif ($category->child_count == 3) {
                 $this->categoryRepository->storeCategory($storeCategoryRequest->name, true, $newPath, $category->id);
             }
-
             return $this->sendResponse(new CategoryResource($category), "Category created");
         }
         return $this->sendError([], 400, "Cannot add new subcategory");
+    }
+
+    public function update(UpdateCategoryRequest $updateCategoryRequest)
+    {
+        $category = Category::find($updateCategoryRequest->id);
+        $category->name = $updateCategoryRequest->name;
+        if ($updateCategoryRequest->parent_id) {
+            $path = $category->child;
+            array_pop($path);
+            $category->parent_id = $updateCategoryRequest->parent_id;
+            $category->path = implode(',', $path) . "," . $updateCategoryRequest->parent_id;
+        }
+        $category->save();
+        return $this->sendResponse(new CategoryResource($category), "Category updated");
+    }
+
+    public function destroy(DeleteCategoryRequest $deleteCategoryRequest)
+    {
+        $category = Category::find($deleteCategoryRequest->id);
     }
 }
