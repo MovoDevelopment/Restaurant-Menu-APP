@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -21,10 +22,18 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = auth()->user();
+
         return [
             'id' => 'required|exists:categories,id',
             'parent_id' => 'nullable|exists:categories,id',
             'name' => 'required',
+            'user_id' => [
+                'required_if:user_type,admin',
+                Rule::exists('users', 'id')->where(function ($query) use ($user) {
+                    return $user->user_type === 'admin';
+                }),
+            ],
         ];
     }
 }

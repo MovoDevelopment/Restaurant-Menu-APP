@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -21,9 +22,17 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = auth()->user();
+
         return [
             'name' => 'required|min:3|max:100',
             'category_id' => 'exists:categories,id',
+            'user_id' => [
+                'required_if:user_type,admin',
+                Rule::exists('users', 'id')->where(function ($query) use ($user) {
+                    return $user->user_type === 'admin';
+                }),
+            ],
         ];
     }
 }

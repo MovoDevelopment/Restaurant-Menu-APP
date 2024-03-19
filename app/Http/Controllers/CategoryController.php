@@ -9,6 +9,7 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
@@ -54,6 +55,10 @@ class CategoryController extends Controller
             $category->parent_id = $updateCategoryRequest->parent_id;
             $category->path = implode(',', $path) . "," . $updateCategoryRequest->parent_id;
         }
+        if (Auth::user()->role != "admin")
+            $category->user_id = Auth::user()->id;
+        else
+            $category->user_id = $updateCategoryRequest->user_id;
         $category->save();
         return $this->sendResponse(new CategoryResource($category), "Category updated");
     }
